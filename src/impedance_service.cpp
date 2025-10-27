@@ -19,6 +19,8 @@ static AD5940Err ConfigureAnalogPath_OnlyForImp(void);
   这些变量在整个应用程序中都可用。
   它包括序列器生成器的基本配置和应用相关参数。
 */
+AppIMPCfg_Type AppIMPCfg; // 定义全局配置变量
+
 AD5940Err AppIMPCfg_init(){
   
   memset(&AppIMPCfg, 0, sizeof(AppIMPCfg));
@@ -347,7 +349,7 @@ AD5940Err AD5940_Imp_Seq_Init(void)
 }
 
 /* 公共函数: 触发温度测量序列 */
-AD5940Err AD5940_IMP_Seq_Trigger(void)
+AD5940Err AD5940_Imp_Seq_Trigger(void)
 {
   /* 通过读寄存器唤醒 AFE - 如果序列从睡眠状态开始，则必须执行 */
   if (AD5940_WakeUp(10) > 10) {
