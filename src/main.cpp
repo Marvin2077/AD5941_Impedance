@@ -94,7 +94,7 @@ unsigned long current_time = millis(); // 获取当前时间戳 (ms)
     case AppState::TRIGGERING_IMPEDANCE:
       // --- 触发阻抗测量序列 ---
       Serial.println("Triggering Impedance sequence...");
-      if (AD5940_IMP_Seq_Trigger() == AD5940ERR_OK) {
+      if (AD5940_Imp_Seq_Trigger() == AD5940ERR_OK) {
         current_state = AppState::WAITING_IMPEDANCE_RESULT; // 切换到等待阻抗结果状态
         last_imp_trigger_time = current_time;       // 记录触发时间
         last_imp_poll_time = current_time;          // 准备立即开始轮询
@@ -134,8 +134,8 @@ unsigned long current_time = millis(); // 获取当前时间戳 (ms)
       break; // WAITING_TEMP_RESULT / WAITING_TEMP_FINISH 状态结束
  
    
+    }
 }
-
 
 // --- 辅助函数：读取芯片 ID --- (保持不变)
 static void ad5941_basic_probe() {
