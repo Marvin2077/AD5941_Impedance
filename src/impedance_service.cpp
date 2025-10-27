@@ -333,10 +333,12 @@ static AD5940Err GenerateImpSequence(void)
 AD5940Err AD5940_Imp_Seq_Init(void)
 {
   AD5940Err error_code;
-
+   //0.配置测量参数
+  error_code = AppIMPCfg_init();
+  if (error_code != AD5940ERR_OK) return error_code;
   // 1. 配置模拟前端通路 
   ConfigureAnalogPath_OnlyForImp();
-
+  
   // 2. 生成阻抗测量序列并加载到 SRAM
   error_code = GenerateImpSequence();
   if (error_code != AD5940ERR_OK) return error_code;
