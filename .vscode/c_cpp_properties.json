@@ -10,6 +10,7 @@
             "includePath": [
                 "G:/AD5941_Project/AD5941_Impedance/include",
                 "G:/AD5941_Project/AD5941_Impedance/src",
+                "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                 "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                 "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
                 "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions/freertos",
@@ -228,7 +229,6 @@
                 "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/RainMaker/src",
                 "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SD/src",
                 "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SD_MMC/src",
-                "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                 "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SPIFFS/src",
                 "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SimpleBLE/src",
                 "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",
@@ -246,6 +246,7 @@
                 "path": [
                     "G:/AD5941_Project/AD5941_Impedance/include",
                     "G:/AD5941_Project/AD5941_Impedance/src",
+                    "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                     "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                     "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
                     "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions/freertos",
@@ -464,7 +465,6 @@
                     "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/RainMaker/src",
                     "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SD/src",
                     "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SD_MMC/src",
-                    "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                     "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SPIFFS/src",
                     "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SimpleBLE/src",
                     "C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",
