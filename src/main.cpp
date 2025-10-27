@@ -90,7 +90,7 @@ unsigned long current_time = millis(); // 获取当前时间戳 (ms)
         current_state = AppState::TRIGGERING_IMPEDANCE; // 切换到触发测量阻抗状态
       }
       break; // IDLE 状态结束
-
+// test
     case AppState::TRIGGERING_IMPEDANCE:
       // --- 触发阻抗测量序列 ---
       Serial.println("Triggering Impedance sequence...");
