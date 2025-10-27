@@ -71,6 +71,7 @@ void setup() {
   Ad5941Glue::hardware_reset();
   Serial.println("AD5941 hardware reset performed.");
   App_AD5941_Init();
+
   ConfigureCE0OutputDirectly(1000.0f, 300.0f);
   // 7) 读取 ADI ID 与 CHIP ID 进行通信测试 (通过 Glue 层调用 ADI 库函数)
   ad5941_basic_probe();
