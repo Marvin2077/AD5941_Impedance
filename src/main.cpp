@@ -3,6 +3,7 @@
 #include "ad5941_board_glue.h"      // 引入 Glue 层头文件
 #include "spi_hal.h"                // 引入 SPI HAL 头文件
 #include "impedance_service.h"
+#include "app_init.h"
 
 // 用 C 方式引入 ADI 库头文件
 extern "C" {
@@ -42,7 +43,7 @@ static const int RESET_AD5941 = 25; // AD5941 复位引脚
 // 函数声明
 static void ad5941_basic_probe(); // 芯片通信探测函数
 static void platform_clock_init(); // 平台时钟初始化函数
-
+static void ConfigureCE0OutputDirectly(float frequency_hz, float amplitude_mvpp);
 // === Arduino Setup ===
 void setup() {
   Serial.begin(115200); // 初始化串口
@@ -69,20 +70,22 @@ void setup() {
   // 4) 执行硬件复位
   Ad5941Glue::hardware_reset();
   Serial.println("AD5941 hardware reset performed.");
-
+  App_AD5941_Init();
+  ConfigureCE0OutputDirectly(1000.0f, 300.0f);
   // 7) 读取 ADI ID 与 CHIP ID 进行通信测试 (通过 Glue 层调用 ADI 库函数)
   ad5941_basic_probe();
-
+  
 
 }
 
 // === Arduino Loop ===
 void loop() {
 
+  
 unsigned long current_time = millis(); // 获取当前时间戳 (ms)
 
   // --- 应用状态机 ---
-  
+  /*
   switch (current_state) {
     case AppState::IDLE:
       // --- 在空闲状态下，检查是否需要触发温度测量 ---
@@ -135,6 +138,7 @@ unsigned long current_time = millis(); // 获取当前时间戳 (ms)
  
    
     }
+      */
 }
 
 // --- 辅助函数：读取芯片 ID --- (保持不变)
@@ -154,4 +158,70 @@ static void ad5941_basic_probe() {
     Serial.println("AD5941 communication probe successful ✅");
   }
   Serial.println("--------------------------------------");
+}
+
+void ConfigureCE0OutputDirectly(float frequency_hz, float amplitude_mvpp) {
+
+  WGCfg_Type wg_cfg;
+  HSDACCfg_Type hsdac_cfg;
+  SWMatrixCfg_Type sw_cfg;
+  uint32_t freq_word;
+  uint32_t amp_word;
+  float sys_clock_freq = 16000000.0f; // 假设系统时钟是 16MHz
+
+  // --- 1 & 2. 计算频率和幅度控制字 ---
+  freq_word = AD5940_WGFreqWordCal(frequency_hz, sys_clock_freq);
+
+  // 幅度字计算 (最大 800mVpp 对应 0x7FF)
+  // 注意：实际输出幅度 = (amp_word / 2047) * 800mVpp * HsDacGain * ExcitBufGain
+  // 这里我们先根据用户期望的 mVpp 计算 amp_word (假设 HsDacGain=1, ExcitBufGain=2)
+  // 如果期望直接控制 DAC 输出的 mVpp (忽略后续增益)，则直接用 amplitude_mvpp
+  // 如果期望控制最终 CE0 输出的 mVpp，需要反推
+  // 为简单起见，这里假设 amplitude_mvpp 是指 DAC 输出峰峰值 (最大800)
+  if (amplitude_mvpp > 800.0f) amplitude_mvpp = 800.0f;
+  if (amplitude_mvpp < 0.0f) amplitude_mvpp = 0.0f;
+  amp_word = (uint32_t)(amplitude_mvpp / 800.0f * 2047.0f + 0.5f);
+
+
+  // --- 3. 配置波形发生器 ---
+  AD5940_StructInit(&wg_cfg, sizeof(wg_cfg)); // 初始化结构体为 0
+  wg_cfg.WgType = WGTYPE_SIN;
+  wg_cfg.SinCfg.SinFreqWord = AD5940_WGFreqWordCal(AppIMPCfg.SweepCurrFreq, AppIMPCfg.SysClkFreq);
+  wg_cfg.SinCfg.SinAmplitudeWord = (uint32_t)(AppIMPCfg.DacVoltPP/800.0f*2047 + 0.5f); // 例如设置为最大幅度
+  wg_cfg.SinCfg.SinOffsetWord = 0;          // 无直流偏置
+  wg_cfg.SinCfg.SinPhaseWord = 0;           // 初始相位为 0
+  // 可以根据需要使能校准 wg_cfg.GainCalEn = bTRUE; wg_cfg.OffsetCalEn = bTRUE;
+  AD5940_WGCfgS(&wg_cfg);
+  Serial.printf("WG configured: FreqWord=0x%lX, AmpWord=0x%lX\n", freq_word, amp_word);
+
+
+  // --- 4. 配置 HSDAC 和激励缓冲器 ---
+  AD5940_StructInit(&hsdac_cfg, sizeof(hsdac_cfg));
+  hsdac_cfg.ExcitBufGain = EXCITBUFGAIN_2; // 激励缓冲器增益 x2
+  hsdac_cfg.HsDacGain = HSDACGAIN_1;       // HSDAC 增益 x1
+  hsdac_cfg.HsDacUpdateRate = 7;           // 设置一个合理的更新率 (例如 7)
+  AD5940_HSDacCfgS(&hsdac_cfg);
+  Serial.println("HSDAC configured.");
+
+
+  // --- 5. 配置开关矩阵 ---
+  AD5940_StructInit(&sw_cfg, sizeof(sw_cfg));
+  sw_cfg.Dswitch = SWD_CE0;  // 将 D (DAC 输出) 连接到 CE0
+  sw_cfg.Pswitch = SWP_OPEN; // 断开 P 开关
+  sw_cfg.Nswitch = SWN_OPEN; // 断开 N 开关
+  sw_cfg.Tswitch = SWT_OPEN; // 断开 T 开关
+  AD5940_SWMatrixCfgS(&sw_cfg);
+  Serial.println("Switch Matrix configured for CE0 output.");
+
+
+  // --- 6. 使能相关 AFE 模块 ---
+  // 先禁用所有模块可能是个好习惯，然后只开启需要的
+  // AD5940_AFECtrlS(AFECTRL_ALL, bFALSE);
+  AD5940_AFECtrlS( AFECTRL_HPREFPWR    // 使能高精度 Bandgap (DAC 参考需要)
+                 | AFECTRL_DACREFPWR   // 使能 DAC 参考缓冲器
+                 | AFECTRL_HSDACPWR    // 使能 HSDAC 电源
+                 | AFECTRL_EXTBUFPWR   // 使能激励缓冲器电源 (连接 HSDAC 输出)
+                 | AFECTRL_WG          // 使能波形发生器
+                 , bTRUE);
+  Serial.println("Required AFE blocks enabled.");
 }

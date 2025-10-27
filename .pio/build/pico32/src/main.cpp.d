@@ -136,4 +136,5 @@
  C:/Users/13172/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
  C:/Users/13172/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
  include/ad5941_board_glue.h include/spi_hal.h \
- include/impedance_service.h include/ad5940.h include/ad5940.h
+ include/impedance_service.h include/ad5940.h include/app_init.h \
+ include/ad5940.h
