@@ -95,7 +95,7 @@ AD5940Err AppIMPCfg_init(){
   //------Impedance测试时数据FIFO数据来源为DFT--------//
   fifo_cfg.FIFOSrc = FIFOSRC_DFT;         // FIFO 数据源：设置为 DFT (数字傅里叶变换) 结果 
   AD5940_FIFOCfg(&fifo_cfg); // 应用 FIFO 配置
-  
+  //test 
    /* 1. 低功耗参考控制 - 关闭它们以省电*/
   //參考電壓已經于app_init配置，此處為特殊控制
   if(AppIMPCfg.BiasVolt != 0.0f)    /* 仅当需要施加直流偏置电压时才开启 */
