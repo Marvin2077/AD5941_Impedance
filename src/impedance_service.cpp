@@ -65,7 +65,7 @@ AD5940Err AppIMPCfg_init(){
 
   AppIMPCfg.ADCAvgNum = ADCAVGNUM_16;      // ADC 平均次数：16次 (注：这似乎是Sinc2的配置，而非独立平均)
 
-  AppIMPCfg.SweepCfg.SweepEn = bTRUE;             // 使能扫频
+  AppIMPCfg.SweepCfg.SweepEn = bFALSE;             // 使能扫频
   AppIMPCfg.SweepCfg.SweepStart = 100;           // 扫频起始频率: 1kHz
   AppIMPCfg.SweepCfg.SweepStop = 100000.0;        // 扫频停止频率: 100kHz
   AppIMPCfg.SweepCfg.SweepPoints = 101;           // 扫频点数: 101
