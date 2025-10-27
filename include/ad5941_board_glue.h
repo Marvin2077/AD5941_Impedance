@@ -12,7 +12,7 @@ struct Config {
   uint8_t pin_reset   = 0xFF;       // 可选：硬复位脚；0xFF 表示未连接
   uint8_t pin_int     = 0xFF;       // 可选：中断脚（此版本未用）
 };
-
+//
 /** 绑定 SPI/引脚并完成基础初始化（配置 CS 为输出并拉高） */
 void setup(const Config& cfg);
 

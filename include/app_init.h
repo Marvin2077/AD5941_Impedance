@@ -12,5 +12,5 @@ extern "C" {
  */
 AD5940Err App_AD5941_Init();
 }
-
+ //
 #endif // APP_INIT_H

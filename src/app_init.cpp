@@ -24,7 +24,7 @@ AD5940Err App_AD5941_Init() {
   LPLoopCfg_Type lp_cfg;    //
 
   Serial.println("Starting Unified Initialization (from app_init.cpp)..."); // 开始初始化硬件平台
-
+//
   /* 使用硬件复位引脚 (如果有连接) 复位 AD5940 */
   AD5940_HWReset();
   /* 初始化 AD5940 芯片，唤醒芯片并检查 SPI 通信是否正常 */
